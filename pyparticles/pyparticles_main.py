@@ -29,13 +29,14 @@ def Particle_Motion(ABC):
     # define abstract method for creating particle environments
     @abstractmethod
     def create_environment(self):
+        pass
 
     # define equation(s) of motion for particles
     @abstractmethod
     def equation_of_motion(self):
+        pass
 
-
-# child of electromagnetic motion
+# electromagnetic child of generalized particle motion
 def Electromagnetic(Particle_Motion):
 
     def __init__(self):
