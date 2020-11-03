@@ -12,23 +12,43 @@ logger = logging.getLogger(name="PyParticles Main")
 def Particle_Motion(ABC):
 
     def __init__(self,
-                 run_type: str,
+                 run: str,
+                 type: str,
                  **pyparticles_config: Dict[str, object]
                  ):
 
-        if run_type == 'random':
+        # check if defined run is randomized or custom
+        if run == 'random':
 
             self.pyparticles_config = np.random
 
-        elif run_type == 'custom':
+        elif run == 'custom':
 
             self.pyparticles_config = pyparticles_config
 
+    # define abstract method for creating particle environments
     @abstractmethod
     def create_environment(self):
 
+    # define equation(s) of motion for particles
     @abstractmethod
     def equation_of_motion(self):
+
+
+# child of electromagnetic motion
+def Electromagnetic(Particle_Motion):
+
+    def __init__(self):
+
+        super.__init__(self,
+                       type='Electromagnetic')
+
+        # inherit the configuration file for electromagnetic particles
+        electro_config = self.pyparticles_config
+
+
+
+
 
 
 def run_create_environment():
