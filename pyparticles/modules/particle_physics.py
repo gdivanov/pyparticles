@@ -6,19 +6,15 @@ ELECTRON_CHARGE = 1.60217662 * 10 ** -19  # in coulombs
 ELECTRON_REST_MASS = 9.10938356 * 10 ** -31  # in kg
 
 # e.o.m. set up
-def equation_of_motion(t: float,
-                       mass_of_particle: float,
-                       charge_of_particle: float,
+def equation_of_motion(particle_params: np.array,
                        position_vector: np.array,
                        velocity_vector: np.array,
-                       magnetic_magnitude: float,
-                       electric_magnitude: float
+                       electromagnetic_params: np.array,
                        ) -> np.array:
     """
 
     Parameters
     ----------
-    t (float) : time (s)
     mass_of_particle (float) : particle's mass (kg)
     charge_of_particle (float) : particle's electromagnetic charge (coloumbs)
     position_vector (np.array) : x, y, z positions of particle at time t
@@ -31,6 +27,12 @@ def equation_of_motion(t: float,
     dx_dt (np.array) : derivative output array to calculate solution to o.d.e.
 
     """
+
+    # acquire particle params
+    mass_of_particle, charge_of_particle = particle_params[0], particle_params[1]
+
+    # acquire particle params
+    electric_magnitude, magnetic_magnitude = electromagnetic_params[0], electromagnetic_params[1]
 
     # acquire all velocity values
     x_velocity = velocity_vector[0]
@@ -60,7 +62,8 @@ def compute_particle_trajectory(time_params: np.array,
                                 particle_params: np.array,
                                 vector_conditions_i: np.array,
                                 integrator_method: str,
-                                equation_of_motion: object) -> np.array:
+                                equation_of_motion: object,
+                                generated_environment: np.array) -> np.array:
 
 
     # acquire initial, final, and delta times
@@ -79,7 +82,7 @@ def compute_particle_trajectory(time_params: np.array,
     particle_positions = []
     particle_velocities = []
 
-    # run through path of particle by integrating over the time steps
+    # run through path of particle by integrating over the time steps til final time is reached
     while eom_solve.successful() and eom_solve.t < time_f:
 
         eom_solve.integrate(eom_solve.t + dt)
