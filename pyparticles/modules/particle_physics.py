@@ -62,9 +62,22 @@ def compute_particle_trajectory(time_params: np.array,
                                 particle_params: np.array,
                                 vector_conditions_i: np.array,
                                 integrator_method: str,
-                                equation_of_motion: object,
-                                generated_environment: np.array) -> np.array:
+                                equation_of_motion: object) -> np.array:
+    """
 
+    Parameters
+    ----------
+    time_params (np.array) : initial, final, and time step (s)
+    particle_params (np.array) : mass and charge of particle (kg : coulombs)
+    vector_conditions_i (np.array) : initial conditions of particle (position : velocity)
+    integrator_method (str) : type of integration to use
+    equation_of_motion (object) : eom function
+
+    Returns
+    -------
+    position, velocity (tuple([])) : tuple of positions and velocities of particle across space
+
+    """
 
     # acquire initial, final, and delta times
     time_i, time_f, dt = time_params[0], time_params[1], time_params[2]

@@ -42,13 +42,15 @@ def Electromagnetic(ParticleMotion):
     def __init__(self):
 
         super.__init__(self,
-                       type='Electromagnetic')
+                       type='Newtonian')
 
         # inherit the configuration file for electromagnetic particles
         electro_config = self.pyparticles_config
 
+        # obtain list for particle parameters
+        particle_params = electro_config['particle_params']
 
-
+        # run over positions of particle(s)
 
 
 
