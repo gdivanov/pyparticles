@@ -9,7 +9,7 @@ from pyparticles.modules import particle_env
 
 logger = logging.getLogger(name="PyParticles Main")
 
-def Particle_Motion(ABC):
+def ParticleMotion(ABC):
 
     def __init__(self,
                  run: str,
@@ -37,7 +37,7 @@ def Particle_Motion(ABC):
         pass
 
 # electromagnetic child of generalized particle motion
-def Electromagnetic(Particle_Motion):
+def Electromagnetic(ParticleMotion):
 
     def __init__(self):
 
