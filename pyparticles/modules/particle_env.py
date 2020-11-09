@@ -9,7 +9,5 @@ def e_field_sign(particle_position: int):
 def b_field_sign(particle_position: int):
     return
 
-
-def generate_environment(environment_size: np.array
-                         ):
+def generate_environment(environment_size: np.array) -> np.array:
     return generated_environment

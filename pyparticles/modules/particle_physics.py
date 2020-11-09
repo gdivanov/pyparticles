@@ -32,6 +32,12 @@ def equation_of_motion(mass_of_particle: float,
 
     """
 
+    # acquire particle params
+    mass_of_particle, charge_of_particle = particle_params[0], particle_params[1]
+
+    # acquire particle params
+    electric_magnitude, magnetic_magnitude = electromagnetic_params[0], electromagnetic_params[1]
+
     # acquire all velocity values
     x_velocity = velocity_vector[0]
     y_velocity = velocity_vector[1]
@@ -88,7 +94,7 @@ def compute_particle_trajectory(time_i: float,
     particle_positions = []
     particle_velocities = []
 
-    # run through path of particle by integrating over the time steps
+    # run through path of particle by integrating over the time steps til final time is reached
     while eom_solve.successful() and eom_solve.t < time_f:
         eom_solve.integrate(eom_solve.t + dt)
 
