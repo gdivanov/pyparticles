@@ -1,30 +1,33 @@
 import logging
-import sys
+import sys, os
 
 from abc import ABC, abstractmethod
 import numpy as np
 
 from pyparticles.modules import particle_physics
 from pyparticles.modules import particle_env
+from pyparticles.modules import utils
 
 logger = logging.getLogger(name="PyParticles Main")
 
 def ParticleMotion(ABC):
 
     def __init__(self,
-                 run: str,
-                 type: str,
-                 **pyparticles_config: Dict[str, object]
+                 pyparticles_config: Dict[str, object]
                  ):
 
         # check if defined run is randomized or custom
         if run == 'random':
 
             self.pyparticles_config = np.random
+            self.physics = np.random
+            self.type = np.random
 
         elif run == 'custom':
 
             self.pyparticles_config = pyparticles_config
+            self.physics = self.pyparticles_config['physics']
+            self.type = self.pyparticles_config['type']
 
     # define abstract method for creating particle environments
     @abstractmethod
@@ -74,18 +77,38 @@ def Electromagnetic(ParticleMotion):
             particle_positions.append(particle_physics.compute_particle_trajectory(mass, charge))
 
 
-def run_create_environment():
-    return
+def run_read_config():
 
-def run_particle_trajectories():
-    return
+    abspath = os.path.abspath(__file__)
+    current_path = os.path.dirname(abspath)
 
+    # get path to general config file
+    config_path = os.path.join(
+        current_path, os.path.join("resources", "config.yml")
+    )  # join parent dir to config str
+
+    return utils.process_yaml(file_path=config_path, read_write_type='r')
+
+
+def run_particle_trajectories(pyparticles_config: dict):
+
+    # instantiate main abstract class
+    ParticleMotion(pyparticles_config=pyparticles_config)
+
+    # check for the physics type to run on (Electromagnetic, Thermal/Pressure, etc..)
+    if pyparticles_config['physical_system'] == 'Electromagnetic':
+
+        particle_positions, particle_velocities = Electromagnetic(ParticleMotion)
+
+    return particle_positions, particle_velocities
 
 def main():
 
-    run_create_environment()
+    # read in main config yaml
+    pyparticles_config = run_read_config()
 
-    run_particle_trajectories()
+    # run through particle trajectories and velocities in space
+    particle_positions, particle_velocities = run_particle_trajectories(pyparticles_config=pyparticles_config)
 
 if __name__ == '__main__':
 
