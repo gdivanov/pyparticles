@@ -49,9 +49,29 @@ def Electromagnetic(ParticleMotion):
 
         # obtain list for particle parameters
         particle_params = electro_config['particle_params']
+        time_params = electro_config['time_params']
+        vector_conditions = electro_config['vector_conditions']
+        integrator_method = electro_config['integrator_method']
 
-        # run over positions of particle(s)
+        # acquire initial, final, and delta times
+        time_i, time_f, dt = time_params[0], time_params[1], time_params[2]
 
+        # acquire particle params
+        mass_of_particle, charge_of_particle = particle_params[0], particle_params[1]
+
+        # acquire desired integration method
+        integrator_method = electro_config['integrator_method']
+
+        # iterate over each particle in system and gather respective positions, velocities in space
+        particle_positions = []
+        particle_velocities = []
+
+        for mass, charge in zip(mass_of_particle, charge_of_particle):
+
+            # map the equation of motion to the ode solver
+            eom_solve = ode(particle_physics.equation_of_motion()).set_integrator(integrator_method)
+
+            particle_positions.append(particle_physics.compute_particle_trajectory(mass, charge))
 
 
 def run_create_environment():
