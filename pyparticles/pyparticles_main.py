@@ -2,33 +2,40 @@ import logging
 import sys, os
 
 from abc import ABC, abstractmethod
+from typing import Dict
 import numpy as np
 
-from pyparticles.modules import particle_physics
-from pyparticles.modules import particle_env
-from pyparticles.modules import utils
+from modules import particle_physics
+from modules import particle_env
+from modules import utils
 
 logger = logging.getLogger(name="PyParticles Main")
 
-def ParticleMotion(ABC):
+class ParticleMotion(ABC):
 
     def __init__(self,
                  pyparticles_config: Dict[str, object]
                  ):
 
+        if pyparticles_config is not None:
+            self.run = pyparticles_config['run_params']['run_type']
+        else:
+            self.run = None
+
         # check if defined run is randomized or custom
-        if run == 'random':
+        if self.run == 'random':
 
             self.pyparticles_config = np.random
             self.physics = np.random
             self.type = np.random
 
-        elif run == 'custom':
+        elif self.run == 'custom':
 
             self.pyparticles_config = pyparticles_config
-            self.physics = self.pyparticles_config['physics']
-            self.type = self.pyparticles_config['type']
+            self.physics = self.pyparticles_config['environment_params']['physics']
+            self.type = self.pyparticles_config['environment_params']['type']
 
+    # TODO: create responsive environment creation methodology to build in
     # define abstract method for creating particle environments
     @abstractmethod
     def create_environment(self):
@@ -40,7 +47,7 @@ def ParticleMotion(ABC):
         pass
 
 # electromagnetic child of generalized particle motion
-def Electromagnetic(ParticleMotion):
+class Electromagnetic(ParticleMotion):
 
     def __init__(self):
 
@@ -60,22 +67,34 @@ def Electromagnetic(ParticleMotion):
         time_i, time_f, dt = time_params[0], time_params[1], time_params[2]
 
         # acquire particle params
-        mass_of_particle, charge_of_particle = particle_params[0], particle_params[1]
+        mass_of_particles, charge_of_particles = particle_params[0], particle_params[1]
 
         # acquire desired integration method
         integrator_method = electro_config['integrator_method']
+
+    def create_environment(self):
+        return created_environment
+
+    def equation_of_motion(self,
+                           mass_of_particles: list,
+                           charge_of_particles: list,
+                           time_i: float,
+                           time_f: float,
+                           dt: float,
+                           integrator_method: str) -> list:
 
         # iterate over each particle in system and gather respective positions, velocities in space
         particle_positions = []
         particle_velocities = []
 
-        for mass, charge in zip(mass_of_particle, charge_of_particle):
+        for mass, charge in zip(mass_of_particles, charge_of_particles):
 
             # map the equation of motion to the ode solver
             eom_solve = ode(particle_physics.equation_of_motion()).set_integrator(integrator_method)
 
             particle_positions.append(particle_physics.compute_particle_trajectory(mass, charge))
 
+        return particle_positions, particle_velocities
 
 def run_read_config():
 
@@ -85,7 +104,7 @@ def run_read_config():
     # get path to general config file
     config_path = os.path.join(
         current_path, os.path.join("resources", "config.yml")
-    )  # join parent dir to config str
+    )
 
     return utils.process_yaml(file_path=config_path, read_write_type='r')
 
